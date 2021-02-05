@@ -18,8 +18,8 @@ response:
 ```json
 [
      {
-      "url": "<url>"
-      "title": "<title>"
+      "url": "<url>",
+      "title": "<title>",
       "err": "<err>"
      }
 ]
