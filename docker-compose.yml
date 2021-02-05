@@ -1,0 +1,11 @@
+version: "3.0"
+services:
+  crawler:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
+    network_mode: "host"
+    ports:
+      - "8012:8012"
