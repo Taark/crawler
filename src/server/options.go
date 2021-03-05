@@ -1,5 +1,9 @@
 package server
 
+/*
+весь этот файл реализация шаблона для установки дефолтных значений
+*/
+
 type Options struct {
 	Port string
 	Scan Scan
@@ -22,10 +26,10 @@ func WithCrawler(scan Scan) Option {
 }
 
 func newOptions(opts ...Option) *Options {
-	o := Options{Port: "8012"}
+	o := Options{Port: "8012"} //установка дефолтного порта
 
 	for _, opt := range opts {
-		opt(&o)
+		opt(&o) //приминение новых параметров. Здесь же устанавливается недефолтный порт.
 	}
 
 	return &o

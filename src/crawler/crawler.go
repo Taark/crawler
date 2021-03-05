@@ -13,16 +13,26 @@ import (
 
 var re = regexp.MustCompile(`<title>(.*)</title>`)
 
+//создание http клиента для отправки запросов
 var httpClient = http.Client{Timeout: 3 * time.Second}
 
 func Scan(urls []string) []*models.Target {
-	var wg sync.WaitGroup
+	var wg sync.WaitGroup //объект для синхронизации конкуретных методов
 	var targets []*models.Target
-	var m sync.Mutex
+	var m sync.Mutex //объект для блокировок
 
+	/*
+		в цикле перебераются все урлы
+		все они обрабатываются параллельно
+		результат записывается в массив targets
+
+
+
+	*/
 	for _, url := range urls {
 		wg.Add(1)
 		urlL := url
+		// go перед функцией означает что ее нужно запустить в отдельном "потоке", т.е. "параллельно"
 		go func() {
 			defer wg.Done()
 			title, err := getTitle(urlL)
@@ -36,6 +46,9 @@ func Scan(urls []string) []*models.Target {
 				t.Err = err.Error()
 			}
 
+			//блокировка нужна чтобы только одна функция в один момент могла записывать в массив targets
+			// т.е. когда один "поток" записывает результат в массив, други потоки приостанавливаются
+			//это не лучшие решение, но я его использовал, чтобы продемонстировать работу с mutex
 			m.Lock()
 			targets = append(targets, t)
 			m.Unlock()
@@ -47,6 +60,8 @@ func Scan(urls []string) []*models.Target {
 	return targets
 
 }
+
+//здесь ничего особо интересного.
 
 func validateUrl(url string) error {
 	_, err := urlHelper.ParseRequestURI(url)
